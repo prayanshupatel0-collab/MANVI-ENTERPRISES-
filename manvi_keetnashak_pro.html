@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MANVI KEETNASHAK | Business Manager</title>
+<style>
+:root{--navy:#102a43;--blue:#1769aa;--green:#16845b;--bg:#f3f6fa;--ink:#172b3a;--muted:#637587;--line:#dce5ed;--red:#b93838}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif}
+header{background:linear-gradient(120deg,#102a43,#1769aa);color:#fff;padding:20px 16px 16px}header h1{font-size:22px;margin:0}header p{margin:5px 0 0;color:#d9e8f5;font-size:13px}
+.wrap{max-width:1100px;margin:auto;padding:14px}.nav{display:flex;gap:7px;overflow:auto;padding:3px 0 12px}.nav button{white-space:nowrap;border:0;border-radius:9px;padding:10px 13px;background:#e3ebf3;color:#17344e;font-weight:650}.nav button.active{background:var(--blue);color:white}
+.view{display:none}.view.active{display:block}.panel{background:white;border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:13px;box-shadow:0 3px 12px #102a4308}
+h2{font-size:18px;margin:0 0 13px}h3{font-size:15px;margin:0 0 10px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:13px}.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px}.stat span{font-size:12px;color:var(--muted)}.stat b{display:block;font-size:20px;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px}.field label{display:block;font-size:12px;color:#536577;margin:0 0 5px}.field input,.field select,.field textarea{width:100%;border:1px solid #cbd7e2;border-radius:8px;padding:10px;font:inherit;background:#fff}.field{margin-bottom:10px}
+button.primary{background:var(--green);color:white;border:0;border-radius:9px;padding:11px 15px;font-weight:700}button.secondary{background:#e9f0f6;color:#1c4567;border:0;border-radius:9px;padding:10px 13px;font-weight:650}button.danger{background:#fff0f0;color:var(--red);border:1px solid #f2cccc;border-radius:8px;padding:7px 9px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}.tablewrap{overflow:auto}table{border-collapse:collapse;width:100%;min-width:620px;font-size:13px}th,td{padding:9px;border-bottom:1px solid #e8edf2;text-align:left}th{background:#f4f7fa;color:#44586b}
+.small{font-size:12px;color:var(--muted);line-height:1.5}.pill{font-size:11px;padding:4px 7px;border-radius:20px;background:#e8f4ee;color:#176343}.notice{background:#fff7e5;border:1px solid #f0dfb7;border-radius:10px;padding:11px;font-size:12px;color:#705626;line-height:1.5}
+.search{max-width:360px;margin:0 0 10px}.search input{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px}
+@media(min-width:700px){.stats{grid-template-columns:repeat(4,minmax(0,1fr))}.wrap{padding:20px}}
+</style></head><body>
+<header><h1>🌱 MANVI KEETNASHAK & BEEJ BHANDAR</h1><p>स्टॉक · खरीद · बिक्री · ग्राहक खाता · सप्लायर · कैशबुक · रिपोर्ट</p></header>
+<main class="wrap">
+<div class="nav" id="nav">
+<button class="active" data-view="home">डैशबोर्ड</button><button data-view="products">सामान / स्टॉक</button><button data-view="customers">ग्राहक खाते</button><button data-view="sale">बिक्री / बिल</button><button data-view="purchase">खरीद / सप्लायर</button><button data-view="expense">खर्च / कैशबुक</button><button data-view="reports">रिपोर्ट / बैकअप</button>
+</div>
+<section class="view active" id="home">
+<div class="stats">
+<div class="stat"><span>आज की बिक्री</span><b id="todaySales">₹0</b></div><div class="stat"><span>ग्राहकों से लेना है</span><b id="receivable">₹0</b></div><div class="stat"><span>सप्लायर को देना है</span><b id="payable">₹0</b></div><div class="stat"><span>स्टॉक की अनुमानित कीमत</span><b id="stockValue">₹0</b></div>
+</div>
+<div class="panel"><h2>त्वरित काम</h2><div class="actions"><button class="primary" data-go="sale">＋ नई बिक्री</button><button class="secondary" data-go="products">＋ सामान जोड़ें</button><button class="secondary" data-go="customers">＋ ग्राहक खाता</button><button class="secondary" data-go="purchase">＋ खरीद दर्ज करें</button></div></div>
+<div class="panel"><h2>कम स्टॉक अलर्ट</h2><div id="lowStock" class="small">अभी कोई अलर्ट नहीं।</div></div>
+<div class="notice">यह संस्करण रिकॉर्ड इस ब्राउज़र/मोबाइल में सेव करता है। मोबाइल बदलने या ब्राउज़र डेटा मिटने पर रिकॉर्ड खो सकते हैं। रिपोर्ट/बैकअप में JSON बैकअप डाउनलोड करें। Firebase ऑनलाइन सिंक और सुरक्षित मालिक Login अभी अलग से जोड़ना बाकी है।</div>
+</section>
+<section class="view" id="products">
+<div class="panel"><h2>सामान और स्टॉक जोड़ें</h2><form id="productForm"><div class="grid">
+<div class="field"><label>सामान का नाम *</label><input name="name" required></div><div class="field"><label>कैटेगरी</label><select name="category"><option>कीटनाशक</option><option>बीज</option><option>खाद</option><option>अन्य</option></select></div>
+<div class="field"><label>कंपनी / ब्रांड</label><input name="brand"></div><div class="field"><label>बैच / लॉट नंबर</label><input name="batch"></div>
+<div class="field"><label>एक्सपायरी तारीख</label><input name="expiry" type="date"></div><div class="field"><label>मौजूदा मात्रा *</label><input name="qty" type="number" min="0" step=".01" required></div>
+<div class="field"><label>इकाई</label><select name="unit"><option>नग</option><option>किलो</option><option>ग्राम</option><option>लीटर</option><option>मिलीलीटर</option><option>बैग</option></select></div><div class="field"><label>खरीद रेट ₹</label><input name="buy" type="number" min="0" step=".01"></div>
+<div class="field"><label>बिक्री रेट ₹</label><input name="sell" type="number" min="0" step=".01"></div><div class="field"><label>कम स्टॉक सीमा</label><input name="min" type="number" min="0" value="5"></div></div><button class="primary">सामान सेव करें</button></form></div>
+<div class="panel"><h2>स्टॉक सूची</h2><div class="search"><input id="productSearch" placeholder="सामान / कंपनी खोजें"></div><div class="tablewrap"><table><thead><tr><th>सामान</th><th>कैटेगरी</th><th>कंपनी</th><th>बैच</th><th>मात्रा</th><th>खरीद ₹</th><th>बिक्री ₹</th><th>एक्सपायरी</th></tr></thead><tbody id="productRows"></tbody></table></div></div>
+</section>
+<section class="view" id="customers">
+<div class="panel"><h2>ग्राहक जोड़ें</h2><form id="customerForm"><div class="grid"><div class="field"><label>ग्राहक का नाम *</label><input name="name" required></div><div class="field"><label>मोबाइल नंबर</label><input name="phone" inputmode="numeric"></div><div class="field"><label>गाँव / पता</label><input name="address"></div><div class="field"><label>पुराना बकाया ₹</label><input name="opening" type="number" min="0" value="0"></div></div><button class="primary">ग्राहक सेव करें</button></form></div>
+<div class="panel"><h2>ग्राहक खाता / लेजर</h2><div class="tablewrap"><table><thead><tr><th>ग्राहक</th><th>मोबाइल</th><th>पता</th><th>बकाया ₹</th></tr></thead><tbody id="customerRows"></tbody></table></div></div>
+</section>
+<section class="view" id="sale">
+<div class="panel"><h2>नई बिक्री / बिल</h2><form id="saleForm"><div class="grid"><div class="field"><label>ग्राहक</label><select name="customer" id="saleCustomer"><option value="">कैश ग्राहक / नाम लिखें</option></select></div><div class="field"><label>ग्राहक का नाम (यदि सूची में नहीं)</label><input name="walkin"></div><div class="field"><label>सामान *</label><select name="product" id="saleProduct" required><option value="">सामान चुनें</option></select></div><div class="field"><label>मात्रा *</label><input name="qty" type="number" min=".01" step=".01" required></div><div class="field"><label>रेट ₹ प्रति इकाई</label><input name="rate" type="number" min="0" step=".01"></div><div class="field"><label>जमा रकम ₹</label><input name="paid" type="number" min="0" step=".01" value="0"></div><div class="field"><label>पेमेंट तरीका</label><select name="method"><option>नकद</option><option>UPI</option><option>बैंक</option><option>उधार</option><option>आंशिक भुगतान</option></select></div><div class="field"><label>बिल तारीख</label><input name="date" type="date" id="saleDate"></div></div><button class="primary">बिक्री सेव करें</button></form></div>
+<div class="panel"><h2>बिक्री रिकॉर्ड</h2><div class="tablewrap"><table><thead><tr><th>तारीख</th><th>बिल</th><th>ग्राहक</th><th>सामान</th><th>कुल ₹</th><th>जमा ₹</th><th>बाकी ₹</th></tr></thead><tbody id="saleRows"></tbody></table></div></div>
+</section>
+<section class="view" id="purchase">
+<div class="panel"><h2>खरीद / सप्लायर बिल</h2><form id="purchaseForm"><div class="grid"><div class="field"><label>सप्लायर / कंपनी *</label><input name="supplier" required></div><div class="field"><label>मोबाइल नंबर</label><input name="phone"></div><div class="field"><label>सामान *</label><select name="product" id="purchaseProduct" required><option value="">सामान चुनें</option></select></div><div class="field"><label>मात्रा *</label><input name="qty" type="number" min=".01" step=".01" required></div><div class="field"><label>खरीद रेट ₹</label><input name="rate" type="number" min="0" step=".01" required></div><div class="field"><label>जमा पेमेंट ₹</label><input name="paid" type="number" min="0" step=".01" value="0"></div><div class="field"><label>बिल तारीख</label><input name="date" type="date"></div></div><button class="primary">खरीद सेव करें</button></form></div>
+<div class="panel"><h2>सप्लायर भुगतान हिसाब</h2><div class="tablewrap"><table><thead><tr><th>सप्लायर</th><th>मोबाइल</th><th>कुल खरीद ₹</th><th>जमा ₹</th><th>बाकी ₹</th></tr></thead><tbody id="supplierRows"></tbody></table></div></div>
+</section>
+<section class="view" id="expense">
+<div class="panel"><h2>दुकान का खर्च दर्ज करें</h2><form id="expenseForm"><div class="grid"><div class="field"><label>खर्च का प्रकार</label><select name="type"><option>किराया</option><option>बिजली</option><option>मजदूरी</option><option>ट्रांसपोर्ट</option><option>अन्य</option></select></div><div class="field"><label>विवरण</label><input name="note"></div><div class="field"><label>रकम ₹ *</label><input name="amount" type="number" min=".01" step=".01" required></div><div class="field"><label>तारीख</label><input name="date" type="date"></div></div><button class="primary">खर्च सेव करें</button></form></div>
+<div class="panel"><h2>खर्च रिकॉर्ड</h2><div class="tablewrap"><table><thead><tr><th>तारीख</th><th>प्रकार</th><th>विवरण</th><th>रकम ₹</th></tr></thead><tbody id="expenseRows"></tbody></table></div></div>
+</section>
+<section class="view" id="reports">
+<div class="panel"><h2>रिपोर्ट और डेटा बैकअप</h2><p class="small">अपना डेटा समय-समय पर डाउनलोड करके सुरक्षित रखें।</p><div class="actions"><button class="primary" id="backup">पूरा बैकअप डाउनलोड करें</button><button class="secondary" id="exportSales">बिक्री CSV डाउनलोड</button><button class="secondary" id="exportProducts">स्टॉक CSV डाउनलोड</button><label class="secondary" style="display:inline-block;cursor:pointer">बैकअप वापस लोड करें<input id="restore" type="file" accept="application/json" hidden></label></div></div>
+<div class="panel"><h2>हिसाब सारांश</h2><div id="summary" class="small"></div></div>
+<div class="notice">महत्वपूर्ण: यह स्थानीय रिकॉर्ड मैनेजर है, आधिकारिक GST बिलिंग या बैंक/UPI ऑटो-कलेक्शन सिस्टम नहीं। GST नियमों के अनुसार बिल जारी करने से पहले विवरण की जाँच करें। डेटा को सुरक्षित रखने के लिए बैकअप डाउनलोड करें।</div>
+</section>
+</main><script>
+const K='manvi_agri_manager_v2';let db=JSON.parse(localStorage.getItem(K)||'{"products":[],"customers":[],"sales":[],"purchases":[],"expenses":[]}');
+const save=()=>localStorage.setItem(K,JSON.stringify(db));const money=n=>'₹'+(Number(n)||0).toLocaleString('en-IN',{maximumFractionDigits:2});const today=()=>new Date().toISOString().slice(0,10);
+document.getElementById('saleDate').value=today();
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>show(b.dataset.view));document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+function show(id){document.querySelectorAll('.view,.nav button').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelector('[data-view="'+id+'"]').classList.add('active');}
+function addRows(id,rows,cols){let tb=document.getElementById(id);tb.innerHTML='';rows.forEach(r=>{let tr=document.createElement('tr');cols.forEach(c=>{let td=document.createElement('td');td.textContent=r[c]??'';tr.append(td)});tb.append(tr)})}
+function refresh(){
+addRows('productRows',db.products.map(p=>({...p,qty:p.qty+' '+p.unit})),['name','category','brand','batch','qty','buy','sell','expiry']);
+addRows('customerRows',db.customers.map(c=>({...c,due:money(c.opening+db.sales.filter(s=>s.customer===c.name).reduce((a,s)=>a+s.due,0))})),['name','phone','address','due']);
+addRows('saleRows',db.sales.map(s=>({...s,total:money(s.total),paid:money(s.paid),due:money(s.due)})),['date','bill','customer','productName','total','paid','due']);
+let suppliers={};db.purchases.forEach(p=>{let x=suppliers[p.supplier]??={supplier:p.supplier,phone:p.phone,total:0,paid:0};x.total+=p.total;x.paid+=p.paid});addRows('supplierRows',Object.values(suppliers).map(x=>({...x,total:money(x.total),paid:money(x.paid),due:money(x.total-x.paid)})),['supplier','phone','total','paid','due']);
+addRows('expenseRows',db.expenses.map(e=>({...e,amount:money(e.amount)})),['date','type','note','amount']);
+['saleProduct','purchaseProduct'].forEach(id=>{let s=document.getElementById(id),v=s.value;s.innerHTML='<option value="">सामान चुनें</option>';db.products.forEach(p=>{let o=document.createElement('option');o.value=p.id;o.textContent=p.name+' (स्टॉक '+p.qty+')';s.append(o)});s.value=v});
+let cs=document.getElementById('saleCustomer'),cv=cs.value;cs.innerHTML='<option value="">कैश ग्राहक / नाम लिखें</option>';db.customers.forEach(c=>{let o=document.createElement('option');o.value=c.name;o.textContent=c.name;cs.append(o)});cs.value=cv;
+let sales=db.sales.filter(s=>s.date===today()).reduce((a,s)=>a+s.total,0),recv=db.sales.reduce((a,s)=>a+s.due,0),pay=db.purchases.reduce((a,p)=>a+p.total-p.paid,0),stock=db.products.reduce((a,p)=>a+p.qty*p.buy,0);
+todaySales.textContent=money(sales);receivable.textContent=money(recv);payable.textContent=money(pay);stockValue.textContent=money(stock);
+let low=db.products.filter(p=>p.qty<=p.min);lowStock.textContent=low.length?low.map(p=>p.name+' — '+p.qty+' '+p.unit+' शेष').join(' · '):'अभी कोई कम स्टॉक अलर्ट नहीं।';
+summary.textContent='कुल बिक्री: '+money(db.sales.reduce((a,s)=>a+s.total,0))+' | कुल खरीद: '+money(db.purchases.reduce((a,p)=>a+p.total,0))+' | कुल खर्च: '+money(db.expenses.reduce((a,e)=>a+e.amount,0))+' | ग्राहक बकाया: '+money(recv)+' | सप्लायर बकाया: '+money(pay);
+}
+function form(id,fn){document.getElementById(id).onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));fn(d);save();e.target.reset();refresh()}}
+form('productForm',d=>{db.products.push({...d,id:crypto.randomUUID(),qty:+d.qty,buy:+d.buy||0,sell:+d.sell||0,min:+d.min||0})});
+form('customerForm',d=>db.customers.push({...d,opening:+d.opening||0}));
+form('saleForm',d=>{let p=db.products.find(x=>x.id===d.product),q=+d.qty,rate=+d.rate||p.sell;if(!p||q>p.qty){alert('स्टॉक उपलब्ध नहीं है।');return}let total=q*rate,paid=+d.paid||0;p.qty-=q;db.sales.push({date:d.date||today(),bill:'MKB-'+String(db.sales.length+1).padStart(4,'0'),customer:d.customer||d.walkin||'कैश ग्राहक',productName:p.name,product:p.id,qty:q,total,paid,due:Math.max(0,total-paid),method:d.method})});
+form('purchaseForm',d=>{let p=db.products.find(x=>x.id===d.product),q=+d.qty,total=q*(+d.rate),paid=+d.paid||0;if(!p)return;p.qty+=q;p.buy=+d.rate;db.purchases.push({date:d.date||today(),supplier:d.supplier,phone:d.phone,product:p.name,qty:q,total,paid})});
+form('expenseForm',d=>db.expenses.push({...d,date:d.date||today(),amount:+d.amount}));
+productSearch.oninput=()=>{let q=productSearch.value.toLowerCase();document.querySelectorAll('#productRows tr').forEach(tr=>tr.style.display=tr.textContent.toLowerCase().includes(q)?'':'none')};
+function download(name,content,type){let a=document.createElement('a'),u=URL.createObjectURL(new Blob([content],{type}));a.href=u;a.download=name;a.click();URL.revokeObjectURL(u)}
+backup.onclick=()=>download('manvi-business-backup.json',JSON.stringify(db,null,2),'application/json');
+restore.onchange=async e=>{try{db=JSON.parse(await e.target.files[0].text());save();refresh();alert('बैकअप वापस लोड हो गया।')}catch{alert('यह बैकअप फाइल सही नहीं है।')}};
+function csv(rows){if(!rows.length)return '';let keys=Object.keys(rows[0]);return [keys.join(','),...rows.map(r=>keys.map(k=>'"'+String(r[k]??'').replaceAll('"','""')+'"').join(','))].join('\n')}
+exportSales.onclick=()=>download('manvi-sales.csv',csv(db.sales),'text/csv');exportProducts.onclick=()=>download('manvi-stock.csv',csv(db.products),'text/csv');
+refresh();
+</script></body></html>
